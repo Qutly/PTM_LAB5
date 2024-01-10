@@ -1,0 +1,71 @@
+#include <LiquidCrystal_I2C.h>
+#include <Servo.h>
+
+LiquidCrystal_I2C lcd(0x27,16,2);  
+
+Servo myservo; 
+
+int pos = 0; 
+
+byte lastButtonState2 = HIGH;
+byte lastButtonState3 = HIGH;
+
+void setup() {
+  lcd.init();                     
+  lcd.backlight();
+  lcd.setCursor(0,0);
+  lcd.print("Kat: ");
+  myservo.attach(A1); 
+  pinMode(3, INPUT_PULLUP);
+  pinMode(2, INPUT_PULLUP);
+}
+
+void loop() {
+byte buttonTwoState = digitalRead(2);
+byte buttonThreeState = digitalRead(3);
+if(buttonTwoState != lastButtonState2) {
+  lastButtonState2 = buttonTwoState;
+  if(buttonTwoState == HIGH) {
+    for (pos = 0; pos <= 180; pos += 1) { 
+    // in steps of 1 degree
+    myservo.write(pos);  
+    if(pos > 9 && pos < 100) {
+      lcd.setCursor(8,0);
+      lcd.print(" ");
+    }
+    if(pos > 0 && pos < 10) {
+      lcd.setCursor(7,0);
+      lcd.print(" ");
+      lcd.setCursor(8,0);
+      lcd.print(" ");
+    }
+    lcd.setCursor(6,0);
+    lcd.print(pos);           
+    delay(15);                       
+  }    
+  }
+}
+
+if(buttonThreeState != lastButtonState3) {
+  lastButtonState3 = buttonThreeState;
+  if(buttonThreeState == HIGH) {
+    for (pos = 180; pos >= 0; pos -= 1) { 
+    myservo.write(pos); 
+    if(pos > 9 && pos < 100) {
+      lcd.setCursor(8,0);
+      lcd.print(" ");
+    }
+    if(pos > 0 && pos < 10) {
+      lcd.setCursor(7,0);
+      lcd.print(" ");
+      lcd.setCursor(8,0);
+      lcd.print(" ");
+    }            
+    lcd.setCursor(6,0);
+    lcd.print(pos);
+    delay(15);                      
+  }   
+  }
+}
+}
+
